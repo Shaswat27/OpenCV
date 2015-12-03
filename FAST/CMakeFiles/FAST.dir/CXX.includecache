@@ -1,0 +1,22 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/shaswat/OpenCV/FAST/fast.cpp
+opencv2/highgui/highgui.hpp
+/home/shaswat/OpenCV/FAST/opencv2/highgui/highgui.hpp
+opencv2/imgproc/imgproc.hpp
+/home/shaswat/OpenCV/FAST/opencv2/imgproc/imgproc.hpp
+opencv2/features2d/features2d.hpp
+/home/shaswat/OpenCV/FAST/opencv2/features2d/features2d.hpp
+iostream
+-
+stdio.h
+-
+stdlib.h
+-
+

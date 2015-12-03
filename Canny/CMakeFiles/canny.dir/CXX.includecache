@@ -1,0 +1,18 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/shaswat/OpenCV/Canny/canny.cpp
+opencv2/imgproc/imgproc.hpp
+/home/shaswat/OpenCV/Canny/opencv2/imgproc/imgproc.hpp
+opencv2/highgui/highgui.hpp
+/home/shaswat/OpenCV/Canny/opencv2/highgui/highgui.hpp
+stdlib.h
+-
+stdio.h
+-
+
