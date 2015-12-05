@@ -4,19 +4,17 @@
 #include "opencv2/features2d/features2d.hpp"
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/calib3d/calib3d.hpp"
-#include "opencv2/nonfree/nonfree.hpp"
+#include "opencv2/imgproc/imgproc.hpp"
+#include "opencv2/video/tracking.hpp"
 
 using namespace cv;
 
 Mat img_prev,img_next,gr_prev,gr_next;
 
 /// For FAST
-std::vector<cv::KeyPoint> FAST(Mat img);
-int thresh = 60;
+void FAST(Mat img);
+int thresh = 90;
 std::vector <cv::KeyPoint> keypoints_prev;
-std::vector <cv::KeyPoint> keypoints_next;
-
-
 
 int main(int argc, char** argv)
 {
@@ -28,32 +26,54 @@ int main(int argc, char** argv)
 	}
 
 	/// Load images
-	img_prev=imread(argv[1]);
-	img_next=imread(argv[2]);
+	img_prev=imread(argv[1],1);
+	img_next=imread(argv[2],1);
 
 	/// Convert to grayscale
 	cvtColor( img_prev, gr_prev, CV_BGR2GRAY );
 	cvtColor( img_next, gr_next, CV_BGR2GRAY );
 
 	/// Find features in img_prev
-	keypoints_prev=FAST(gr_prev);
+	FAST(gr_prev);
 
+	/// Display features
+	cv::namedWindow("FAST features",CV_WINDOW_AUTOSIZE);
+    Mat corners;
+    drawKeypoints( img_prev, keypoints_prev, corners, Scalar::all(-1), DrawMatchesFlags::DEFAULT );
+    cv::imshow("FAST features", corners);
+
+    
 	///  Apply KLT Tracker
 	vector<uchar> status;
 	vector<float> err;
-	std::vector<Point2f> prev,next;
-	prev = keypoints_prev.pt;
-	calcOpticalFlowPyrLK( gr_prev, gr_next, prev, next, status, err);
+	std::vector<Point2f> prev,temp,next;
+	KeyPoint key;
+	key.convert(keypoints_prev,prev);
+	calcOpticalFlowPyrLK( gr_prev, gr_next, prev, temp, status, err);
 	size_t i, k;
-    for( i = k = 0; i < next.size(); i++ )
+	Mat draw = imread(argv[1],1);
+	
+	for( i = k = 0; i < temp.size(); i++ )
     {
-    	
+    	/// Status = 0 => feature not found
+    	if(!status[i]) continue;
+    	/// Status = 1 => feature found
+    	else
+    	{
+    		next.push_back(temp[i]);
+    		cv::line(draw,prev[i],temp[i],cv::Scalar(255));
+    		k++;
+    	}
+    	    	
     }
+
+    /// Display the image with tracks
+    cv::namedWindow("KLT Tracker",CV_WINDOW_AUTOSIZE);
+    cv::imshow("KLT Tracker", draw);
+    cv::waitKey(0);
 }
 
-std::vector<cv::KeyPoint> FAST(Mat img)
+void FAST(Mat img) 
 {
-	std::vector<cv::KeyPoint> keypoints;
-	FASTX(img, keypoints, thresh, true, FastFeatureDetector::TYPE_9_16);
-	return keypoints;
+	FAST(img, keypoints_prev, thresh, true); //, FastFeatureDetector::TYPE_9_16);
 }

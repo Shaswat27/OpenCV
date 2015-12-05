@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 2.8)
+project( KLT )
+find_package( OpenCV REQUIRED )
+add_executable( KLT KLT.cpp )
+target_link_libraries( KLT ${OpenCV_LIBS} )

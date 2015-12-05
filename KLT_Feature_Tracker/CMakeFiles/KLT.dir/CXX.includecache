@@ -1,0 +1,26 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/shaswat/OpenCV/KLT_Feature_Tracker/KLT.cpp
+stdio.h
+-
+iostream
+-
+opencv2/core/core.hpp
+/home/shaswat/OpenCV/KLT_Feature_Tracker/opencv2/core/core.hpp
+opencv2/features2d/features2d.hpp
+/home/shaswat/OpenCV/KLT_Feature_Tracker/opencv2/features2d/features2d.hpp
+opencv2/highgui/highgui.hpp
+/home/shaswat/OpenCV/KLT_Feature_Tracker/opencv2/highgui/highgui.hpp
+opencv2/calib3d/calib3d.hpp
+/home/shaswat/OpenCV/KLT_Feature_Tracker/opencv2/calib3d/calib3d.hpp
+opencv2/imgproc/imgproc.hpp
+/home/shaswat/OpenCV/KLT_Feature_Tracker/opencv2/imgproc/imgproc.hpp
+opencv2/video/tracking.hpp
+/home/shaswat/OpenCV/KLT_Feature_Tracker/opencv2/video/tracking.hpp
+
