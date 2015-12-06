@@ -13,7 +13,7 @@ Mat img_prev,img_next,gr_prev,gr_next;
 
 /// For FAST
 void FAST(Mat img);
-int thresh = 90;
+int thresh = 30;
 std::vector <cv::KeyPoint> keypoints_prev;
 
 int main(int argc, char** argv)
@@ -49,7 +49,10 @@ int main(int argc, char** argv)
 	std::vector<Point2f> prev,temp,next;
 	KeyPoint key;
 	key.convert(keypoints_prev,prev);
-	calcOpticalFlowPyrLK( gr_prev, gr_next, prev, temp, status, err);
+	std::vector<cv::Mat> pyr;
+	int levels;
+	levels=buildOpticalFlowPyramid(gr_prev, pyr, Size(21,21), 4);
+	calcOpticalFlowPyrLK( pyr, gr_next, prev, temp, status, err);
 	size_t i, k;
 	Mat draw = imread(argv[1],1);
 	
@@ -75,5 +78,5 @@ int main(int argc, char** argv)
 
 void FAST(Mat img) 
 {
-	FAST(img, keypoints_prev, thresh, true); //, FastFeatureDetector::TYPE_9_16);
+	FASTX(img, keypoints_prev, thresh, true, FastFeatureDetector::TYPE_9_16);
 }
