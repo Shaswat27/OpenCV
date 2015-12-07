@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 2.8)
+project( inlier )
+find_package( OpenCV REQUIRED )
+add_executable( inlier inlier.cpp )
+target_link_libraries( inlier ${OpenCV_LIBS} )
