@@ -14,14 +14,23 @@ Mat img_prev,img_next,gr_prev,gr_next;
 
 /// For FAST
 void FAST(Mat img);
-int thresh = 30;
+int thresh = 115;
 std::vector <cv::KeyPoint> keypoints_prev;
 
+/// For Inlier detection
 /// Norm
+int match_error = 16;
+
 double norm(Point2f i, Point2f j);
 
-/// Checking if vertex exists in list
-int notBelong(std::vector<int> v, int j);
+/// Creating intersection of two adjacency lists
+std::vector<int> intersection(std::vector<int> v, std::vector<int> temp);
+
+/// Return a vector of potential nodes
+std::vector<int> findPotentialNodes(std::vector<int> Q_int, int** W, int k);
+
+/// Update the current clique to obtain maximal clique
+std::vector<int> updateClique(std::vector<int> potentialNodes, std::vector<int> Q_int, int** W, int k);
 
 int main(int argc, char** argv)
 {
@@ -73,7 +82,7 @@ int main(int argc, char** argv)
     	else
     	{
     		next.push_back(temp[i]);
-            track[k]=i;
+            track.push_back(i);
     		cv::line(draw,prev[i],temp[i],cv::Scalar(255));
     		k++;
        	}
@@ -85,20 +94,32 @@ int main(int argc, char** argv)
     int** W = (int **)malloc(k * sizeof(int *));
     for (i=0; i<k; i++)
          W[i] = (int *)malloc(k * sizeof(int));
-    /// Fill in values
-    std::vector<Point2f> inlier;
     for(int i=0; i<k; i++)
     {
     	for(int j=0; j<k; j++)
     	{
     		int i_prev=track[i]; /// Find the corresponding feature in previous frame
     		int j_prev=track[j];
-    		if ( norm(next[i],next[j]) == norm(prev[i_prev],prev[j_prev]) ) W[i][j]=1; 
+            if (i==j) W[i][j]=0;
+    		else if ( abs(norm(next[i],next[j])-norm(prev[i_prev],prev[j_prev]))<=match_error ) W[i][j]=1; 
     		else W[i][j]=0;
     	}
     }
+
+    printf("%lu\n",k);
+
+    /*for(int i=0;i<k;i++)
+    {
+        for(int j=0;j<k;j++)
+            printf("%d ",W[i][j]);
+        printf("\n");
+    }
+    */
+    
+    
     /// Construct maximum clique from W
     std::vector<Point2f> Q;
+    /// Initialize clique with node of highest degree
     std::vector<int> Q_index;
     int sum=0,tmp=0,node;
     /// Initialize clique with node of highest degree
@@ -116,30 +137,38 @@ int main(int argc, char** argv)
         }
     }
     Q_index.push_back(node);
+
+    //printf("\nIntial node: %d",node);
+
+    //int o=0;
+    
+    /// Continue to update clique using greedy algorithm
     while(1)
     {
-        std::vector<int> v;
-        for(int i=0;i<Q_index.size();i++) /// For each vertex in Q
+        std::vector<int> potentialNodes=findPotentialNodes(Q_index,W,k);
+
+        if (potentialNodes.size() == 0) break; /// No more nodes to be found => exit loop
+        else
         {
-            for(int j=0;j<k;j++) /// Check adjacency list of that vertex
-            {
-                if(W[j][i]==1 && notBelong(v,j)) v.push_back(j);
-            }
-            /// v[i] now has unique vertices connected to the element in Q
+            Q_index = updateClique(potentialNodes,Q_index,W,k);
         }
-        //Now, select the vertex in 
-
+        /// Keep only unique nodes
+        std::vector<int>::iterator it;
+        it = std::unique (Q_index.begin(), Q_index.end());
+        Q_index.resize( std::distance(Q_index.begin(),it) );
+       
     }
+    
+    /// Final clique is found
+    /// Q_index now has indices of all the nodes in the maximal clique
+    for(int i=0;i<Q_index.size();i++)
+        Q.push_back(next[Q_index[i]]);
 
-
+    /// Q now has all the mutually consistent features
 
     /// Display the image with tracks
     cv::namedWindow("KLT Tracker",CV_WINDOW_AUTOSIZE);
     cv::imshow("KLT Tracker", draw);
-
-    
-
-    
 
     cv::waitKey(0);
 }
@@ -154,10 +183,60 @@ double norm(Point2f i, Point2f j)
 	return ( sqrt( (i.x-j.x)*(i.x-j.x) + (i.y-j.y)*(i.y-j.y) ) );
 }
 
-int notBelong(std::vector<int> v, int j) /// Return 1 if it does not belong to v, else 0
+std::vector<int> intersection(std::vector<int> v, std::vector<int> temp) 
 {
-    int ret=1;
-    for(int i=0;i<v.size();v++)
-        if(v[i]==j) ret=0;
-    return ret;
+    std::vector<int> intsctn;
+
+    std::sort(v.begin(), v.end());
+    std::sort(temp.begin(), temp.end());
+ 
+    std::set_intersection(v.begin(), v.end(), temp.begin(), temp.end(), std::back_inserter(intsctn));
+
+    return intsctn;
+}
+
+std::vector<int> findPotentialNodes(std::vector<int> Q_int, int** W, int k)
+{
+    /// Vector to store potential nodes
+    std::vector<int> potentialNodes, temp, final_set;
+
+    for (int i=0; i<Q_int.size(); i++) /// For all nodes currently in clique
+    {
+        std::vector<int> v;
+        for(int j=0;j<k;j++) /// For nodes connected to the node in clique
+        {
+            if(W[j][Q_int[i]]==1) v.push_back(j); 
+        }
+        if (temp.size()==0) temp=final_set=v;
+        else 
+        {
+            final_set = intersection(v,temp);
+            temp=final_set;
+        }
+    }
+    return final_set;
+}
+
+std::vector<int> updateClique(std::vector<int> potentialNodes, std::vector<int> Q_int, int** W, int k)
+{
+    int deg=0, max_deg=0, node;
+
+    std::vector<int> Q=Q_int;
+
+    for(int i=0;i<potentialNodes.size();i++)
+    {
+        deg=0;
+        for(int j=0;j<k;j++)
+        {
+            deg+=W[j][potentialNodes[i]];
+        }
+        if(deg>=max_deg) 
+        {
+            max_deg=deg;
+            node = potentialNodes[i];
+        }       
+    }
+
+    Q.push_back(node);
+    return Q; 
 }

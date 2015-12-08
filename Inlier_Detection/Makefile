@@ -39,10 +39,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = "/home/shaswat/OpenCV/Inlier Detection"
+CMAKE_SOURCE_DIR = /home/shaswat/OpenCV/Inlier_Detection
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = "/home/shaswat/OpenCV/Inlier Detection"
+CMAKE_BINARY_DIR = /home/shaswat/OpenCV/Inlier_Detection
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -69,9 +69,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start "/home/shaswat/OpenCV/Inlier Detection/CMakeFiles" "/home/shaswat/OpenCV/Inlier Detection/CMakeFiles/progress.marks"
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/shaswat/OpenCV/Inlier_Detection/CMakeFiles /home/shaswat/OpenCV/Inlier_Detection/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start "/home/shaswat/OpenCV/Inlier Detection/CMakeFiles" 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/shaswat/OpenCV/Inlier_Detection/CMakeFiles 0
 .PHONY : all
 
 # The main clean target

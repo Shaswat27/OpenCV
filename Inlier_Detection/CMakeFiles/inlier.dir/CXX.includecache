@@ -6,7 +6,7 @@
 
 #IncludeRegexTransform: 
 
-/home/shaswat/OpenCV/Inlier Detection/inlier.cpp
+/home/shaswat/OpenCV/Inlier_Detection/inlier.cpp
 stdio.h
 -
 iostream
@@ -14,15 +14,15 @@ iostream
 math.h
 -
 opencv2/core/core.hpp
-/home/shaswat/OpenCV/Inlier Detection/opencv2/core/core.hpp
+/home/shaswat/OpenCV/Inlier_Detection/opencv2/core/core.hpp
 opencv2/features2d/features2d.hpp
-/home/shaswat/OpenCV/Inlier Detection/opencv2/features2d/features2d.hpp
+/home/shaswat/OpenCV/Inlier_Detection/opencv2/features2d/features2d.hpp
 opencv2/highgui/highgui.hpp
-/home/shaswat/OpenCV/Inlier Detection/opencv2/highgui/highgui.hpp
+/home/shaswat/OpenCV/Inlier_Detection/opencv2/highgui/highgui.hpp
 opencv2/calib3d/calib3d.hpp
-/home/shaswat/OpenCV/Inlier Detection/opencv2/calib3d/calib3d.hpp
+/home/shaswat/OpenCV/Inlier_Detection/opencv2/calib3d/calib3d.hpp
 opencv2/imgproc/imgproc.hpp
-/home/shaswat/OpenCV/Inlier Detection/opencv2/imgproc/imgproc.hpp
+/home/shaswat/OpenCV/Inlier_Detection/opencv2/imgproc/imgproc.hpp
 opencv2/video/tracking.hpp
-/home/shaswat/OpenCV/Inlier Detection/opencv2/video/tracking.hpp
+/home/shaswat/OpenCV/Inlier_Detection/opencv2/video/tracking.hpp
 

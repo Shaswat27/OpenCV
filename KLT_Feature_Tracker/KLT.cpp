@@ -13,7 +13,7 @@ Mat img_prev,img_next,gr_prev,gr_next;
 
 /// For FAST
 void FAST(Mat img);
-int thresh = 30;
+int thresh = 150;
 std::vector <cv::KeyPoint> keypoints_prev;
 
 int main(int argc, char** argv)
@@ -69,6 +69,8 @@ int main(int argc, char** argv)
     	}
     	    	
     }
+
+    printf("\n%lu\n", next.size());
 
     /// Display the image with tracks
     cv::namedWindow("KLT Tracker",CV_WINDOW_AUTOSIZE);
