@@ -14,12 +14,12 @@ Mat img_prev,img_next,gr_prev,gr_next;
 
 /// For FAST
 void FAST(Mat img);
-int thresh = 115;
+int thresh = 90;
 std::vector <cv::KeyPoint> keypoints_prev;
 
 /// For Inlier detection
 /// Norm
-int match_error = 16;
+int match_error = 5;
 
 double norm(Point2f i, Point2f j);
 
@@ -119,7 +119,6 @@ int main(int argc, char** argv)
     
     /// Construct maximum clique from W
     std::vector<Point2f> Q;
-    /// Initialize clique with node of highest degree
     std::vector<int> Q_index;
     int sum=0,tmp=0,node;
     /// Initialize clique with node of highest degree
@@ -164,11 +163,24 @@ int main(int argc, char** argv)
     for(int i=0;i<Q_index.size();i++)
         Q.push_back(next[Q_index[i]]);
 
+
+
     /// Q now has all the mutually consistent features
+    printf("%lu\n", Q.size());
+
+    Mat inlier  = imread(argv[1]);
+
+    for( int i=0; i < Q_index.size(); i++ )
+    {
+        cv::line(inlier,prev[track[Q_index[i]]],Q[i],cv::Scalar(255)); 
+    }
 
     /// Display the image with tracks
     cv::namedWindow("KLT Tracker",CV_WINDOW_AUTOSIZE);
     cv::imshow("KLT Tracker", draw);
+
+    cv::namedWindow("Inlier",CV_WINDOW_AUTOSIZE);
+    cv::imshow("Inlier", inlier);
 
     cv::waitKey(0);
 }
