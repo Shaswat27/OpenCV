@@ -6,6 +6,65 @@
 
 using namespace cv;
 
+class blob
+{
+  private:
+    float x;
+    float y;
+
+    float avg_red;
+    float fraction_red;
+    float first_red_mode;
+    float second_red_mode;
+    float difference_modes;
+    float count_pixels;
+
+  public:
+    blob()
+    {
+      x = 0.0;
+      y = 0.0;
+
+      avg_red = 0.0;
+      fraction_red = 0.0;
+      first_red_mode = 0.0;
+      second_red_mode = 0.0;
+      difference_modes = 0.0;
+      count_pixels = 0.0;
+    }
+
+    void set(float x, float y, float avg_red, float fraction_red, float first_red_mode, float second_red_mode, float count_pixels)
+    {
+      this->x = x;
+      this->y = y;
+
+      this->avg_red = avg_red;
+      this->fraction_red = fraction_red;
+      this->first_red_mode = first_red_mode;
+      this->second_red_mode = second_red_mode;
+      this->difference_modes = first_red_mode - second_red_mode;
+      this->count_pixels = count_pixels;
+    }
+
+    ~blob()
+    {}
+
+    void normalize()
+    {
+      avg_red /= count_pixels;
+      first_red_mode /= count_pixels;
+      second_red_mode /= count_pixels;
+      difference_modes /= count_pixels;
+    }
+
+    void view()
+    {
+      printf("\n%f %f -> %f , %f, %f, %f, %f\n", x, y, avg_red, first_red_mode, second_red_mode, fraction_red, difference_modes);
+    }
+};
+
+blob sample[9];
+
 //for modes divide 0-255 as 0-4 5-9 10-14 15-19 ... 250-254 : 255 -> special case
 int frequency[51];
 std::vector<float> avg_red, fraction_red, first_red_mode, second_red_mode, difference_modes, count_pixels;
@@ -73,7 +132,13 @@ void blob_detector(Mat im)
 
   for(int i=0; i<keypoints.size(); i++)
   {
-      printf("%f %f -> %f\n", keypoints[i].pt.x, keypoints[i].pt.y, avg_red[i]);
+      sample[i].set(keypoints[i].pt.x, keypoints[i].pt.y, avg_red[i], fraction_red[i], first_red_mode[i], second_red_mode[i], count_pixels[i]);
+  }
+
+  for(int i=0; i<keypoints.size();i++)
+  {
+    sample[i].normalize();
+    sample[i].view();
   }
  
   // Draw detected blobs as red circles.
@@ -139,7 +204,7 @@ void update_freq(int value)
 
   if(index < 51)
     (frequency[index])++;
-  else
+  else if (index == 51)
     (frequency[50])++;
 }
 
@@ -149,13 +214,13 @@ float mode()
 
   for(int i=0; i<51; i++)
   {
-    if( frequency[i]> frequency[largest] )
+    if( frequency[i] > frequency[largest] )
       largest = i;
   }
 
-  float m = (float)(largest*5 + largest*5 + 4)/2.0; //average of the 5 sized bin 
+  float m = (float)((largest*5 + largest*5 + 4))/2.0; //average of the 5 sized bin 
 
-  frequency[largest] = -1; //to facilitate finding the second mode
+  frequency[largest] = 0; //to facilitate finding the second mode
 
   return m;
 }
