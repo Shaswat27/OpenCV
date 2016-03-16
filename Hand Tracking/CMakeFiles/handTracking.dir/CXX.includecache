@@ -1,0 +1,22 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/shaswat/OpenCV/Hand Tracking/include/ht.hpp
+opencv2/opencv.hpp
+-
+iostream
+-
+vector
+-
+algorithm
+-
+
+/home/shaswat/OpenCV/Hand Tracking/src/ht.cpp
+../include/ht.hpp
+/home/shaswat/OpenCV/Hand Tracking/include/ht.hpp
+
