@@ -39,7 +39,7 @@ vector<vector<Point> > find_contours(Mat *frame, Mat fore)
 			hull.push_back(hulls[0]);
 
 			//draw the contour
-			drawContours(*frame,hulls,-1,cv::Scalar(0,255,0),2);
+			drawContours(*frame,hulls,-1,cv::Scalar(0,0,0),2);
 		}
 	}
 
@@ -86,6 +86,32 @@ bool check_inside(vector<Point> poly, Point test) //the points would be in clock
 //remove color from the image corresponding to the hulls
 void remove_color(Mat *black, Mat frame, vector<vector<Point> > hulls)
 {
-	
+	for(int k = 0; k<hulls.size(); ++k)
+	{
+		double x = 0.0, y = 0.0;
+
+		for(int h = 0; h<hulls[k].size(); ++h)
+		{
+			x += hulls[k][h].x;
+			y += hulls[k][h].y;
+		}
+
+		x /= hulls[k].size();
+		y /= hulls[k].size();
+
+		Point seed;
+		seed.x = x;
+		seed.y = y;
+
+		vector<vector<Point> > _hulls(1);
+
+		_hulls.push_back(hulls[k]);
+
+		drawContours(*black,_hulls,-1,cv::Scalar(255,255,255),CV_FILLED);
+
+		//Scalar replace(255, 255, 255);
+
+		//floodFill(*black, seed, replace);
+    }
 }
 

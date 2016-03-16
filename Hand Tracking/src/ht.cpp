@@ -34,7 +34,8 @@ int main(int argc, char *argv[])
 		
 		hulls = find_contours(&frame, fore);
 
-		remove_color(&black, frame, hulls);
+		if(hulls.size()>=2 && hulls.size()<=4)
+			remove_color(&black, frame, hulls);
 
 		imshow("Frame",frame);
 		imshow("Black", black);
