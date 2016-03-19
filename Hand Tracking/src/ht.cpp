@@ -3,6 +3,9 @@
 int main(int argc, char *argv[])
 {
 	Mat frame, back, fore;
+
+	srand(time(NULL));
+
 	VideoCapture cap(0);
 	cap >> frame;
 	Mat black(frame.rows, frame.cols, CV_8UC3, Scalar(0,0,0));
@@ -34,7 +37,7 @@ int main(int argc, char *argv[])
 		
 		hulls = find_contours(&frame, fore);
 
-		if(hulls.size()>=2 && hulls.size()<=4)
+		if(hulls.size()>=2 && hulls.size()<=3)
 			remove_color(&black, frame, hulls);
 
 		imshow("Frame",frame);
